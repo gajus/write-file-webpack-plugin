@@ -1,0 +1,32 @@
+{
+  "name": "write-file-webpack-plugin",
+  "version": "1.0.0",
+  "description": "Forces webpack-dev-server to write bundle files to the file system.",
+  "main": "./dist/index.js",
+  "author": {
+    "name": "Gajus Kuizinas",
+    "email": "gk@anuary.com",
+    "url": "http://gajus.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gajus/write-file-webpack-plugin"
+  },
+  "keywords": [
+    "webpack",
+    "plugin",
+    "webpack-dev-server",
+    "write",
+    "file"
+  ],
+  "scripts": {
+    "pragmatist": "node ./node_modules/.bin/pragmatist",
+    "build": "npm run pragmatist build",
+    "lint": "npm run pragmatist lint",
+    "test": "npm run pragmatist test",
+    "readme": "node ./node_modules/.bin/gitdown ./.README/README.md --output-file ./README.md"
+  },
+  "devDependencies": {
+    "pragmatist": "^1.1.3"
+  }
+}
