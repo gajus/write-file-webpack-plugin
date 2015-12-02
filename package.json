@@ -27,6 +27,6 @@
     "readme": "node ./node_modules/.bin/gitdown ./.README/README.md --output-file ./README.md"
   },
   "devDependencies": {
-    "pragmatist": "^1.1.3"
+    "pragmatist": "1.1.x"
   }
 }

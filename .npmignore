@@ -2,5 +2,6 @@ src
 tests
 coverage
 .travis.yml
+.editorconfig
 .eslintrc
 *.log
