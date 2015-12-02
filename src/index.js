@@ -1,9 +1,17 @@
 import fs from 'fs';
 import path from 'path';
 
-export default () => {
+function WriteFilePlugin(options = {}) {
     return {
         apply: (compiler) => {
+            if (options.extensions) {
+                options.extensions.forEach((extension) => {
+                    if (typeof extension !== 'string') {
+                        throw new Error(`${extension}: all extensions must be a string`);
+                    }
+                });
+            }
+
             compiler.plugin('done', (stats) => {
                 if (stats.compilation.errors.length) {
                     return;
@@ -11,22 +19,33 @@ export default () => {
 
                 stats.compilation.chunks.forEach((chunk) => {
                     chunk.files.forEach((fileName) => {
-                        let filePath;
+                        const fileExt = fileName.split('.').pop();
+                        if (options.extensions && options.extensions[0] &&
+                            !(options.extensions.indexOf(fileExt) > -1)) {
+                            return;
+                        }
 
                         if (!compiler.options.output.path) {
                             throw new Error('output.path is not defined.');
                         }
 
-                        filePath = path.join(compiler.options.output.path, fileName);
+                        const filePath = path.join(compiler.options.output.path, fileName);
 
-                        compiler.outputFileSystem.readFile(filePath, 'utf-8', (errorRead, body) => {
-                            if (errorRead) {
-                                throw new Error('Cannot read input file.');
+                        // Only creates a directory one-level deep.
+                        fs.mkdir(compiler.options.output.path, (error) => {
+                            if (error && error.code !== 'EEXIST') {
+                                throw new Error(error);
                             }
-                            fs.writeFile(filePath, body, (errorWrite) => {
-                                if (errorWrite) {
-                                    throw new Error('Cannot write output file.');
+
+                            compiler.outputFileSystem.readFile(filePath, 'utf-8', (errorRead, body) => {
+                                if (errorRead) {
+                                    throw new Error('Cannot read input file.');
                                 }
+                                fs.writeFile(filePath, body, (errorWrite) => {
+                                    if (errorWrite) {
+                                        throw new Error('Cannot write output file.');
+                                    }
+                                });
                             });
                         });
                     });
@@ -34,4 +53,6 @@ export default () => {
             });
         }
     };
-};
+}
+
+export default WriteFilePlugin;

@@ -19,7 +19,7 @@ import WriteFilePlugin from 'write-file-webpack-plugin';
 export default {
     // ...
     plugins: [
-        new WriteFilePlugin()
+        new WriteFilePlugin({extensions:['css']})
     ]
 }
 ```
