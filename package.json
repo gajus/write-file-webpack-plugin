@@ -1,6 +1,6 @@
 {
   "name": "write-file-webpack-plugin",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Forces webpack-dev-server to write bundle files to the file system.",
   "main": "./dist/index.js",
   "author": {
