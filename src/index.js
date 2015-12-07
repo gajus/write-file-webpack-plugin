@@ -14,7 +14,7 @@ let apply,
  * @returns {boolean}
  */
 isMemoryFileSystem = (outputFileSystem) => {
-    return outputFileSystem.__proto__.constructor.name === 'MemoryFileSystem';
+    return outputFileSystem.constructor.name === 'MemoryFileSystem';
 };
 
 apply = (compiler) => {
