@@ -26,7 +26,8 @@ module.exports = {
     devServer: devServer,
     context: path.resolve(__dirname, './src'),
     entry: {
-        app: './app'
+        foo: './app',
+        bar: './app'
     },
     output: {
         path: devServer.outputPath,
@@ -34,6 +35,8 @@ module.exports = {
         publicPath: devServer.publicPath
     },
     plugins: [
-        new WriteFileWebpackPlugin()
+        new WriteFileWebpackPlugin({
+            test: /foo/
+        })
     ]
 };

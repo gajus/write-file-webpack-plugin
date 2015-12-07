@@ -13,6 +13,26 @@ This plugin has no effect when `webpack` program is used.
 npm install write-file-webpack-plugin --save-dev
 ```
 
+## API
+
+```js
+/**
+ * @typedef {Object} options
+ * @property {RegExp} test A regular expression used to test if file should be written. When not present, all bundle will be written.
+ */
+
+/**
+ * @param {options} options
+ * @returns {Object}
+ */
+new WriteFilePlugin();
+
+new WriteFilePlugin({
+    // Write only files that have ".css" extension.
+    test: /\.css$/
+});
+```
+
 ## Usage
 
 Configure [`webpack.config.js`](https://webpack.github.io/docs/configuration.html) to use the `write-file-webpack-plugin` plugin.

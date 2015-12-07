@@ -3,8 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import mkdirp from 'mkdirp';
 
-let apply,
-    isMemoryFileSystem;
+let isMemoryFileSystem;
 
 /**
  * When 'webpack' program is used, constructor name is equal to 'NodeOutputFileSystem'.
@@ -17,45 +16,64 @@ isMemoryFileSystem = (outputFileSystem) => {
     return outputFileSystem.constructor.name === 'MemoryFileSystem';
 };
 
-apply = (compiler) => {
-    compiler.plugin('done', (stats) => {
-        let files,
-            outputPath;
+/**
+ * @typedef {Object} options
+ * @property {RegExp} test A regular expression used to test if file should be written. When not present, all bundle will be written.
+ */
 
-        if (!isMemoryFileSystem(compiler.outputFileSystem)) {
-            return;
-        }
+/**
+ * @param {options} options
+ * @returns {Object}
+ */
+export default (options = {}) => {
+    let apply;
 
-        if (stats.compilation.errors.length) {
-            return;
-        }
+    if (options.test && !_.isRegExp(options.test)) {
+        throw new Error('options.test value must be an instance of RegExp.');
+    }
 
-        if (!compiler.options.devServer.outputPath) {
-            throw new Error('devServer.outputPath is not defined.');
-        }
+    apply = (compiler) => {
+        compiler.plugin('done', (stats) => {
+            let files,
+                outputPath;
 
-        outputPath = compiler.options.devServer.outputPath;
+            if (!isMemoryFileSystem(compiler.outputFileSystem)) {
+                return;
+            }
 
-        mkdirp.sync(outputPath);
+            if (stats.compilation.errors.length) {
+                return;
+            }
 
-        files = _.map(stats.compilation.chunks, 'files');
-        files = _.flatten(files);
+            if (!compiler.options.devServer.outputPath) {
+                throw new Error('devServer.outputPath is not defined.');
+            }
 
-        _.forEach(files, (bundleFileName) => {
-            let bundleBody,
-                bundleFilePath,
-                outputFilePath;
+            outputPath = compiler.options.devServer.outputPath;
 
-            bundleFilePath = path.join('/', bundleFileName);
-            bundleBody = compiler.outputFileSystem.readFileSync(bundleFilePath);
-            outputFilePath = path.join(outputPath, bundleFileName);
+            mkdirp.sync(outputPath);
 
-            fs.writeFileSync(outputFilePath, bundleBody);
+            files = _.map(stats.compilation.chunks, 'files');
+            files = _.flatten(files);
+
+            _.forEach(files, (bundleFileName) => {
+                let bundleBody,
+                    bundleFilePath,
+                    outputFilePath;
+
+                if (options.test && !options.test.test(bundleFileName)) {
+                    return;
+                }
+
+                bundleFilePath = path.join('/', bundleFileName);
+                bundleBody = compiler.outputFileSystem.readFileSync(bundleFilePath);
+                outputFilePath = path.join(outputPath, bundleFileName);
+
+                fs.writeFileSync(outputFilePath, bundleBody);
+            });
         });
-    });
-};
+    };
 
-export default () => {
     return {
         apply
     };
