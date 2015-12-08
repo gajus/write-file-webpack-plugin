@@ -1,4 +1,5 @@
 src
+sandbox
 tests
 coverage
 .*
