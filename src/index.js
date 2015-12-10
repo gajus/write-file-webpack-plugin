@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import fs from 'fs';
+import crypto from 'crypto';
 import path from 'path';
 import mkdirp from 'mkdirp';
 
@@ -26,6 +27,7 @@ isMemoryFileSystem = (outputFileSystem) => {
  * @returns {Object}
  */
 export default (options = {}) => {
+    let previousBodyHash = {};
     let apply;
 
     if (options.test && !_.isRegExp(options.test)) {
@@ -58,6 +60,7 @@ export default (options = {}) => {
 
             _.forEach(files, (bundleFileName) => {
                 let bundleBody,
+                    bundleBodyHash,
                     bundleFilePath,
                     outputFilePath;
 
@@ -67,8 +70,14 @@ export default (options = {}) => {
 
                 bundleFilePath = path.join(compiler.options.output.path, bundleFileName);
                 bundleBody = compiler.outputFileSystem.readFileSync(bundleFilePath);
+                bundleBodyHash = crypto.createHash('md5').update(bundleBody).digest('hex');
                 outputFilePath = path.join(outputPath, bundleFileName);
 
+                if (previousBodyHash[outputFilePath] === bundleBodyHash) {
+                    return
+                }
+
+                previousBodyHash[outputFilePath] = bundleBodyHash;
                 fs.writeFileSync(outputFilePath, bundleBody);
             });
         });
