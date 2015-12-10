@@ -74,7 +74,7 @@ export default (options = {}) => {
                 outputFilePath = path.join(outputPath, bundleFileName);
 
                 if (previousBodyHash[outputFilePath] === bundleBodyHash) {
-                    return
+                    return;
                 }
 
                 previousBodyHash[outputFilePath] = bundleBodyHash;
