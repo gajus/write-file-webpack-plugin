@@ -53,29 +53,22 @@ export default (options = {}) => {
 
             mkdirp.sync(outputPath);
 
-            files = _.map(stats.compilation.assets, 'existsAt');
+            files = _.map(stats.compilation.chunks, 'files');
             files = _.flatten(files);
 
-            _.forEach(files, (assetPath) => {
+            _.forEach(files, (bundleFileName) => {
                 let bundleBody,
+                    bundleFilePath,
                     outputFilePath;
 
-                if (options.test && !options.test.test(assetPath)) {
+                if (options.test && !options.test.test(bundleFileName)) {
                     return;
                 }
 
-                bundleBody = compiler.outputFileSystem.readFileSync(assetPath);
-                outputFilePath = path.join(outputPath, assetPath);
+                bundleFilePath = path.posix.join(compiler.options.output.path, bundleFileName);
+                bundleBody = compiler.outputFileSystem.readFileSync(bundleFilePath);
+                outputFilePath = path.join(outputPath, bundleFileName);
 
-	            // When using copy-webpack-plugin the assetPath may contain folders
-	            try {
-		            fs.statSync(path.dirname(outputFilePath))
-	            } catch (err) {
-		            if (err && err.code === 'ENOENT') {
-			            mkdirp(path.dirname(outputFilePath))
-		            }
-	            }
-	            
                 fs.writeFileSync(outputFilePath, bundleBody);
             });
         });
