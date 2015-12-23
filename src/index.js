@@ -60,7 +60,9 @@ export default (options = {}) => {
                 let bundleBody,
                     outputFilePath;
 
-                if (options.test && !options.test.test(assetPath)) {
+                // Don't include webpack's hot update files
+                if ((options.test && !options.test.test(assetPath)) || 
+                    assetPath.indexOf('hot-update') > -1) {
                     return;
                 }
 
