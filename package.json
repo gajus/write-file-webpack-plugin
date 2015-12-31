@@ -20,7 +20,7 @@
     "file"
   ],
   "scripts": {
-    "pragmatist": "node ./node_modules/.bin/pragmatist",
+    "pragmatist": "node ./node_modules/.bin/pragmatist --browser",
     "lint": "npm run pragmatist lint",
     "test": "npm run pragmatist test",
     "build": "npm run pragmatist build",
@@ -31,7 +31,7 @@
     "readme": "node ./node_modules/.bin/gitdown ./.README/README.md --output-file ./README.md"
   },
   "devDependencies": {
-    "pragmatist": "^1.9.6",
+    "pragmatist": "^2.3.13",
     "webpack": "^1.12.9",
     "webpack-dev-server": "^1.14.0"
   },
