@@ -1,7 +1,7 @@
 # write-file-webpack-plugin
 
 [![NPM version](http://img.shields.io/npm/v/write-file-webpack-plugin.svg?style=flat-square)](https://www.npmjs.com/package/write-file-webpack-plugin)
-[![js-canonical-style](https://img.shields.io/badge/code%20style-canonical-brightgreen.svg?style=flat-square)](https://github.com/gajus/canonical)
+[![js-canonical-style](https://img.shields.io/badge/code%20style-canonical-blue.svg?style=flat-square)](https://github.com/gajus/canonical)
 
 Forces `webpack-dev-server` program to write bundle files to the file system.
 
