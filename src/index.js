@@ -53,22 +53,31 @@ export default (options = {}) => {
 
             mkdirp.sync(outputPath);
 
-            files = _.map(stats.compilation.chunks, 'files');
+            files = _.map(stats.compilation.assets, 'existsAt');
             files = _.flatten(files);
 
-            _.forEach(files, (bundleFileName) => {
+            _.forEach(files, (assetPath) => {
                 let bundleBody,
-                    bundleFilePath,
                     outputFilePath;
 
-                if (options.test && !options.test.test(bundleFileName)) {
+                // Don't include webpack's hot update files
+                if ((options.test && !options.test.test(assetPath)) || 
+                    assetPath.indexOf('hot-update') > -1) {
                     return;
                 }
 
-                bundleFilePath = path.join(compiler.options.output.path, bundleFileName);
-                bundleBody = compiler.outputFileSystem.readFileSync(bundleFilePath);
-                outputFilePath = path.join(outputPath, bundleFileName);
+                bundleBody = compiler.outputFileSystem.readFileSync(assetPath);
+                outputFilePath = path.join(outputPath, assetPath);
 
+	            // When using copy-webpack-plugin the assetPath may contain folders
+	            try {
+		            fs.statSync(path.dirname(outputFilePath))
+	            } catch (err) {
+		            if (err && err.code === 'ENOENT') {
+			            mkdirp(path.dirname(outputFilePath))
+		            }
+	            }
+	            
                 fs.writeFileSync(outputFilePath, bundleBody);
             });
         });
