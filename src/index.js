@@ -65,7 +65,7 @@ export default (options = {}) => {
                     return;
                 }
 
-                bundleFilePath = path.join(compiler.options.output.path, bundleFileName);
+                bundleFilePath = path.posix.join(compiler.options.output.path, bundleFileName);
                 bundleBody = compiler.outputFileSystem.readFileSync(bundleFilePath);
                 outputFilePath = path.join(outputPath, bundleFileName);
 
