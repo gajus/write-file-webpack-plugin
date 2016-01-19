@@ -21,7 +21,7 @@
     "file"
   ],
   "scripts": {
-    "pragmatist": "node ./node_modules/.bin/pragmatist --browser",
+    "pragmatist": "node ./node_modules/.bin/pragmatist --es5",
     "lint": "npm run pragmatist lint",
     "test": "npm run pragmatist test",
     "build": "npm run pragmatist build",
