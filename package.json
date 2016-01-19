@@ -1,5 +1,6 @@
 {
   "name": "write-file-webpack-plugin",
+  "license": "BSD-3-Clause",
   "version": "2.1.2",
   "description": "Forces webpack-dev-server to write bundle files to the file system.",
   "main": "./dist/index.js",
@@ -31,12 +32,12 @@
     "readme": "node ./node_modules/.bin/gitdown ./.README/README.md --output-file ./README.md"
   },
   "devDependencies": {
-    "pragmatist": "^2.3.13",
-    "webpack": "^1.12.9",
-    "webpack-dev-server": "^1.14.0"
+    "pragmatist": "^3.0.2",
+    "webpack": "^1.12.11",
+    "webpack-dev-server": "^1.14.1"
   },
   "dependencies": {
-    "lodash": "^3.10.1",
+    "lodash": "^4.0.0",
     "mkdirp": "^0.5.1"
   }
 }
