@@ -2,6 +2,9 @@ import _ from 'lodash';
 import fs from 'fs';
 import path from 'path';
 import mkdirp from 'mkdirp';
+import {
+    createHash
+} from 'crypto';
 
 let isMemoryFileSystem;
 
@@ -19,6 +22,7 @@ isMemoryFileSystem = (outputFileSystem) => {
 /**
  * @typedef {Object} options
  * @property {RegExp} test A regular expression used to test if file should be written. When not present, all bundle will be written.
+ * @property {boolean} useHashIndex Use hash index to write only files that have changed since the last iteration (default: true).
  */
 
 /**
@@ -26,11 +30,22 @@ isMemoryFileSystem = (outputFileSystem) => {
  * @returns {Object}
  */
 export default (options = {}) => {
-    let apply;
+    let apply,
+        hashIndex;
 
-    if (options.test && !_.isRegExp(options.test)) {
+    if (_.has(options, 'test') && !_.isRegExp(options.test)) {
         throw new Error('options.test value must be an instance of RegExp.');
+    } else {
+        options.test = null;
     }
+
+    if (_.has(options, 'useHashIndex') && !_.isBoolean(options.useHashIndex)) {
+        throw new Error('options.useHashIndex value must be of boolean type.');
+    } else {
+        options.useHashIndex = true;
+    }
+
+    hashIndex = {};
 
     apply = (compiler) => {
         compiler.plugin('done', (stats) => {
@@ -55,6 +70,7 @@ export default (options = {}) => {
 
             _.forEach(files, (relativeAssetPath) => {
                 let assetBody,
+                    assetBodyHash,
                     assetAbsolutePath,
                     outputFilePath;
 
@@ -64,6 +80,16 @@ export default (options = {}) => {
 
                 assetAbsolutePath = path.join(compiler.options.output.path, relativeAssetPath);
                 assetBody = compiler.outputFileSystem.readFileSync(assetAbsolutePath, 'utf8');
+
+                if (options.useHashIndex) {
+                    assetBodyHash = createHash('sha256').update(assetBody).digest('hex');
+
+                    if (hashIndex[relativeAssetPath] && hashIndex[relativeAssetPath] === assetBodyHash) {
+                        return;
+                    }
+
+                    hashIndex[relativeAssetPath] = assetBodyHash;
+                }
 
                 outputFilePath = path.join(outputPath, relativeAssetPath);
 
