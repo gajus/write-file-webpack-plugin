@@ -20,6 +20,7 @@ npm install write-file-webpack-plugin --save-dev
  * @typedef {Object} options
  * @property {RegExp} test A regular expression used to test if file should be written. When not present, all bundle will be written.
  * @property {boolean} useHashIndex Use hash index to write only files that have changed since the last iteration (default: true).
+ * @property {boolean} log Logs names of the files that are being written (or skipped because they have not changed) (default: true).
  */
 
 /**
