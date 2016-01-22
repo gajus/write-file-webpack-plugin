@@ -69,9 +69,9 @@ export default (options = {}) => {
             files = _.map(stats.compilation.assets, 'existsAt');
 
             _.forEach(files, (relativeAssetPath) => {
-                let assetBody,
+                let assetAbsolutePath,
+                    assetBody,
                     assetBodyHash,
-                    assetAbsolutePath,
                     outputFilePath;
 
                 if (options.test && !options.test.test(relativeAssetPath)) {
