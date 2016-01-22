@@ -51,25 +51,25 @@ export default (options = {}) => {
 
             outputPath = compiler.options.devServer.outputPath;
 
-            mkdirp.sync(outputPath);
+            files = _.map(stats.compilation.assets, 'existsAt');
 
-            files = _.map(stats.compilation.chunks, 'files');
-            files = _.flatten(files);
-
-            _.forEach(files, (bundleFileName) => {
-                let bundleBody,
-                    bundleFilePath,
+            _.forEach(files, (relativeAssetPath) => {
+                let assetBody,
+                    assetAbsolutePath,
                     outputFilePath;
 
-                if (options.test && !options.test.test(bundleFileName)) {
+                if (options.test && !options.test.test(relativeAssetPath)) {
                     return;
                 }
 
-                bundleFilePath = path.join(compiler.options.output.path, bundleFileName);
-                bundleBody = compiler.outputFileSystem.readFileSync(bundleFilePath);
-                outputFilePath = path.join(outputPath, bundleFileName);
+                assetAbsolutePath = path.join(compiler.options.output.path, relativeAssetPath);
+                assetBody = compiler.outputFileSystem.readFileSync(assetAbsolutePath, 'utf8');
 
-                fs.writeFileSync(outputFilePath, bundleBody);
+                outputFilePath = path.join(outputPath, relativeAssetPath);
+
+                mkdirp.sync(path.dirname(outputFilePath));
+
+                fs.writeFileSync(outputFilePath, assetBody);
             });
         });
     };
