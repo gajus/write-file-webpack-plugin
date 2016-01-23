@@ -35,7 +35,7 @@ isMemoryFileSystem = (outputFileSystem) => {
  */
 export default (options = {}) => {
     let apply,
-        hashIndex,
+        assetSourceHashIndex,
         log;
 
     if (_.has(options, 'test') && !_.isRegExp(options.test)) {
@@ -64,7 +64,7 @@ export default (options = {}) => {
         console.log(chalk.dim('[' + moment().format('HH:mm:ss') + '] [write-file-webpack-plugin]') + ' ' + append);
     };
 
-    hashIndex = {};
+    assetSourceHashIndex = {};
 
     apply = (compiler) => {
         let outputPath,
@@ -94,8 +94,6 @@ export default (options = {}) => {
         };
 
         compiler.plugin('done', (stats) => {
-            let files;
-
             setup();
 
             if (stats.compilation.errors.length) {
@@ -104,40 +102,41 @@ export default (options = {}) => {
 
             log('stats.compilation.errors.length is "' + chalk.cyan(stats.compilation.errors.length) + '".');
 
-            files = _.map(stats.compilation.assets, 'existsAt');
-
-            _.forEach(files, (relativeAssetPath) => {
-                let assetAbsolutePath,
-                    assetBody,
-                    assetBodyHash,
+            _.forEach(stats.compilation.assets, (asset) => {
+                let assetPath,
+                    assetSize,
+                    assetSource,
+                    assetSourceHash,
                     outputFilePath;
 
-                if (options.test && !options.test.test(relativeAssetPath)) {
+                assetPath = asset.existsAt;
+
+                if (options.test && !options.test.test(assetPath)) {
                     return;
                 }
 
-                assetAbsolutePath = path.join(compiler.options.output.path, relativeAssetPath);
-                assetBody = compiler.outputFileSystem.readFileSync(assetAbsolutePath, 'utf8');
+                assetSize = asset.size();
+                assetSource = asset.source();
 
                 if (options.useHashIndex) {
-                    assetBodyHash = createHash('sha256').update(assetBody).digest('hex');
+                    assetSourceHash = createHash('sha256').update(assetSource).digest('hex');
 
-                    if (hashIndex[relativeAssetPath] && hashIndex[relativeAssetPath] === assetBodyHash) {
-                        log(relativeAssetPath + ' ' + chalk.yellow('[skipped; matched hash index]'));
+                    if (assetSourceHashIndex[assetPath] && assetSourceHashIndex[assetPath] === assetSourceHash) {
+                        log(assetPath + ' ' + chalk.yellow('[skipped; matched hash index]'));
 
                         return;
                     }
 
-                    hashIndex[relativeAssetPath] = assetBodyHash;
+                    assetSourceHashIndex[assetPath] = assetSourceHash;
                 }
 
-                log(relativeAssetPath + ' ' + chalk.green('[written]') + ' ' +  chalk.magenta('(' + filesize(assetBody.length) + ')'));
+                log(assetPath + ' ' + chalk.green('[written]') + ' ' +  chalk.magenta('(' + filesize(assetSize) + ')'));
 
-                outputFilePath = path.join(outputPath, relativeAssetPath);
+                outputFilePath = path.join(outputPath, assetPath);
 
                 mkdirp.sync(path.dirname(outputFilePath));
 
-                fs.writeFileSync(outputFilePath, assetBody);
+                fs.writeFileSync(outputFilePath, assetSource);
             });
         });
     };
