@@ -102,14 +102,11 @@ export default (options = {}) => {
 
             log('stats.compilation.errors.length is "' + chalk.cyan(stats.compilation.errors.length) + '".');
 
-            _.forEach(stats.compilation.assets, (asset) => {
-                let assetPath,
-                    assetSize,
+            _.forEach(stats.compilation.assets, (asset, assetPath) => {
+                let assetSize,
                     assetSource,
                     assetSourceHash,
                     outputFilePath;
-
-                assetPath = asset.existsAt;
 
                 if (options.test && !options.test.test(assetPath)) {
                     return;
