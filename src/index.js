@@ -57,13 +57,13 @@ export default (userOptions = {}) => {
         throw new Error('options.log value must be of boolean type.');
     }
 
-    log = (append) => {
+    log = (...append) => {
         if (!options.log) {
             return;
         }
 
         /* eslint-disable no-console */
-        console.log(chalk.dim('[' + moment().format('HH:mm:ss') + '] [write-file-webpack-plugin]') + ' ' + append);
+        console.log(chalk.dim('[' + moment().format('HH:mm:ss') + '] [write-file-webpack-plugin]'), ...append);
         /* eslint-enable no-console */
     };
 
