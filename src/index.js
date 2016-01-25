@@ -30,30 +30,31 @@ isMemoryFileSystem = (outputFileSystem) => {
  */
 
 /**
- * @param {options} options
+ * @param {options} userOptions
  * @returns {Object}
  */
-export default (options = {}) => {
+export default (userOptions = {}) => {
     let apply,
         assetSourceHashIndex,
-        log;
+        log,
+        options;
 
-    if (_.has(options, 'test') && !_.isRegExp(options.test)) {
+    options = _.assign({}, {
+        log: true,
+        test: null,
+        useHashIndex: true
+    }, userOptions);
+
+    if (!_.isNull(options.test) && !_.isRegExp(options.test)) {
         throw new Error('options.test value must be an instance of RegExp.');
-    } else {
-        options.test = null;
     }
 
-    if (_.has(options, 'useHashIndex') && !_.isBoolean(options.useHashIndex)) {
+    if (!_.isBoolean(options.useHashIndex)) {
         throw new Error('options.useHashIndex value must be of boolean type.');
-    } else {
-        options.useHashIndex = true;
     }
 
-    if (_.has(options, 'log') && !_.isBoolean(options.log)) {
+    if (!_.isBoolean(options.log)) {
         throw new Error('options.log value must be of boolean type.');
-    } else {
-        options.log = true;
     }
 
     log = (append) => {
@@ -61,7 +62,9 @@ export default (options = {}) => {
             return;
         }
 
+        /* eslint-disable no-console */
         console.log(chalk.dim('[' + moment().format('HH:mm:ss') + '] [write-file-webpack-plugin]') + ' ' + append);
+        /* eslint-enable no-console */
     };
 
     assetSourceHashIndex = {};
@@ -127,7 +130,7 @@ export default (options = {}) => {
                     assetSourceHashIndex[assetPath] = assetSourceHash;
                 }
 
-                log(assetPath + ' ' + chalk.green('[written]') + ' ' +  chalk.magenta('(' + filesize(assetSize) + ')'));
+                log(assetPath + ' ' + chalk.green('[written]') + ' ' + chalk.magenta('(' + filesize(assetSize) + ')'));
 
                 outputFilePath = path.join(outputPath, assetPath);
 
