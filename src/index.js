@@ -69,6 +69,8 @@ export default (userOptions = {}) => {
 
     assetSourceHashIndex = {};
 
+    log('options', options);
+
     apply = (compiler) => {
         let outputPath,
             setup,
@@ -112,6 +114,8 @@ export default (userOptions = {}) => {
                     outputFilePath;
 
                 if (options.test && !options.test.test(assetPath)) {
+                    log(assetPath + ' ' + chalk.yellow('[skipped; does not match test]'));
+
                     return;
                 }
 
