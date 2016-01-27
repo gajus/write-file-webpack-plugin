@@ -32,14 +32,14 @@
     "readme": "node ./node_modules/.bin/gitdown ./.README/README.md --output-file ./README.md"
   },
   "devDependencies": {
-    "pragmatist": "^3.0.2",
-    "webpack": "^2.0.4-beta",
+    "pragmatist": "^3.0.3",
+    "webpack": "^2.0.5-beta",
     "webpack-dev-server": "^2.0.0-beta"
   },
   "dependencies": {
     "chalk": "^1.1.1",
     "filesize": "^3.2.0",
-    "lodash": "^4.0.0",
+    "lodash": "^4.0.1",
     "mkdirp": "^0.5.1",
     "moment": "^2.11.1"
   }

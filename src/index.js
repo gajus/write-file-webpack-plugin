@@ -111,10 +111,17 @@ export default (userOptions = {}) => {
                 let assetSize,
                     assetSource,
                     assetSourceHash,
-                    outputFilePath;
+                    outputFilePath,
+                    relativeOutputPath,
+                    targetDefinition;
+
+                outputFilePath = path.join(outputPath, assetPath);
+                relativeOutputPath = path.relative(process.cwd(), outputFilePath);
+
+                targetDefinition = 'asset: ' + chalk.cyan('./' + assetPath) + '; destination: ' + chalk.cyan('./' + relativeOutputPath);
 
                 if (options.test && !options.test.test(assetPath)) {
-                    log(assetPath + ' ' + chalk.yellow('[skipped; does not match test]'));
+                    log(targetDefinition, chalk.yellow('[skipped; does not match test]'));
 
                     return;
                 }
@@ -126,7 +133,7 @@ export default (userOptions = {}) => {
                     assetSourceHash = createHash('sha256').update(assetSource).digest('hex');
 
                     if (assetSourceHashIndex[assetPath] && assetSourceHashIndex[assetPath] === assetSourceHash) {
-                        log(assetPath + ' ' + chalk.yellow('[skipped; matched hash index]'));
+                        log(targetDefinition, chalk.yellow('[skipped; matched hash index]'));
 
                         return;
                     }
@@ -134,13 +141,11 @@ export default (userOptions = {}) => {
                     assetSourceHashIndex[assetPath] = assetSourceHash;
                 }
 
-                log(assetPath + ' ' + chalk.green('[written]') + ' ' + chalk.magenta('(' + filesize(assetSize) + ')'));
+                log(targetDefinition, chalk.green('[written]'), chalk.magenta('(' + filesize(assetSize) + ')'));
 
-                outputFilePath = path.join(outputPath, assetPath);
+                mkdirp.sync(path.dirname(relativeOutputPath));
 
-                mkdirp.sync(path.dirname(outputFilePath));
-
-                fs.writeFileSync(outputFilePath, assetSource);
+                fs.writeFileSync(relativeOutputPath, assetSource);
             });
         });
     };
