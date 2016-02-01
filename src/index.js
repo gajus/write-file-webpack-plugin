@@ -100,6 +100,10 @@ export default (userOptions = {}) => {
 
         compiler.plugin('done', (stats) => {
             setup();
+            
+	    if (!outputPath) {
+	    	return;
+	    }
 
             if (stats.compilation.errors.length) {
                 return;
