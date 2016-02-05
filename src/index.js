@@ -96,10 +96,14 @@ export default (userOptions = {}) => {
             outputPath = compiler.options.devServer.outputPath;
 
             log('compiler.options.devServer.outputPath is "' + chalk.cyan(compiler.options.devServer.outputPath) + '".');
+
+            return true;
         };
 
         compiler.plugin('done', (stats) => {
-            setup();
+            if (!setup()) {
+                return;
+            }
 
             if (stats.compilation.errors.length) {
                 return;
