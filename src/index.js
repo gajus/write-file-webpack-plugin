@@ -74,11 +74,12 @@ export default (userOptions = {}) => {
     apply = (compiler) => {
         let outputPath,
             setup,
-            setupDone;
+            setupDone,
+            setupStatus;
 
         setup = () => {
             if (setupDone) {
-                return;
+                return setupStatus;
             }
 
             setupDone = true;
@@ -97,7 +98,9 @@ export default (userOptions = {}) => {
 
             log('compiler.options.devServer.outputPath is "' + chalk.cyan(compiler.options.devServer.outputPath) + '".');
 
-            return true;
+            setupStatus = true;
+
+            return setupStatus;
         };
 
         compiler.plugin('done', (stats) => {
