@@ -90,13 +90,20 @@ export default (userOptions = {}) => {
                 return;
             }
 
-            if (!compiler.options.devServer.outputPath) {
-                throw new Error('devServer.outputPath is not defined.');
+            // https://github.com/gajus/write-file-webpack-plugin/issues/1
+            if (_.has(compiler, 'options.output.path') && compiler.options.output.path !== path.sep) {
+                outputPath = compiler.options.output.path;
             }
 
-            outputPath = compiler.options.devServer.outputPath;
+            if (!outputPath) {
+                if (!_.has(compiler, 'options.devServer.outputPath')) {
+                    throw new Error('output.path is not accessible and devServer.outputPath is not defined. Define devServer.outputPath.');
+                }
 
-            log('compiler.options.devServer.outputPath is "' + chalk.cyan(compiler.options.devServer.outputPath) + '".');
+                outputPath = compiler.options.devServer.outputPath;
+            }
+
+            log('compiler.options.devServer.outputPath is "' + chalk.cyan(outputPath) + '".');
 
             setupStatus = true;
 
