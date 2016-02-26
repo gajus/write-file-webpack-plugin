@@ -159,7 +159,7 @@ export default (userOptions = {}) => {
 
                 mkdirp.sync(path.dirname(relativeOutputPath));
 
-                fs.writeFileSync(relativeOutputPath, assetSource);
+                fs.writeFileSync(relativeOutputPath.split('?')[0], assetSource);
             });
         });
     };
