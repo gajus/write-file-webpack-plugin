@@ -9,37 +9,27 @@ import chalk from 'chalk';
 import moment from 'moment';
 import filesize from 'filesize';
 
-let isMemoryFileSystem;
-
 /**
  * When 'webpack' program is used, constructor name is equal to 'NodeOutputFileSystem'.
  * When 'webpack-dev-server' program is used, constructor name is equal to 'MemoryFileSystem'.
- *
- * @param {Object} outputFileSystem
- * @returns {boolean}
  */
-isMemoryFileSystem = (outputFileSystem) => {
+const isMemoryFileSystem = (outputFileSystem: Object): boolean => {
     return outputFileSystem.constructor.name === 'MemoryFileSystem';
 };
 
 /**
- * @typedef {Object} options
- * @property {RegExp} test A regular expression used to test if file should be written. When not present, all bundle will be written.
- * @property {boolean} useHashIndex Use hash index to write only files that have changed since the last iteration (default: true).
- * @property {boolean} log Logs names of the files that are being written (or skipped because they have not changed) (default: true).
+ * @property test A regular expression used to test if file should be written. When not present, all bundle will be written.
+ * @property useHashIndex Use hash index to write only files that have changed since the last iteration (default: true).
+ * @property log Logs names of the files that are being written (or skipped because they have not changed) (default: true).
  */
+type UserOptionsType = {
+    test: ?RegExp,
+    useHashIndex: ?boolean,
+    log: ?boolean
+};
 
-/**
- * @param {options} userOptions
- * @returns {Object}
- */
-export default (userOptions = {}) => {
-    let apply,
-        assetSourceHashIndex,
-        log,
-        options;
-
-    options = _.assign({}, {
+export default (userOptions: UserOptionsType = {}): Object => {
+    const options = _.assign({}, {
         log: true,
         test: null,
         useHashIndex: true
@@ -57,7 +47,7 @@ export default (userOptions = {}) => {
         throw new Error('options.log value must be of boolean type.');
     }
 
-    log = (...append) => {
+    const log = (...append) => {
         if (!options.log) {
             return;
         }
@@ -67,17 +57,16 @@ export default (userOptions = {}) => {
         /* eslint-enable no-console */
     };
 
-    assetSourceHashIndex = {};
+    const assetSourceHashIndex = {};
 
     log('options', options);
 
-    apply = (compiler) => {
+    const apply = (compiler) => {
         let outputPath,
-            setup,
             setupDone,
             setupStatus;
 
-        setup = () => {
+        const setup = (): boolean => {
             if (setupDone) {
                 return setupStatus;
             }
@@ -87,7 +76,7 @@ export default (userOptions = {}) => {
             log('compiler.outputFileSystem is "' + chalk.cyan(compiler.outputFileSystem.constructor.name) + '".');
 
             if (!isMemoryFileSystem(compiler.outputFileSystem)) {
-                return;
+                return false;
             }
 
             // https://github.com/gajus/write-file-webpack-plugin/issues/1
@@ -125,17 +114,9 @@ export default (userOptions = {}) => {
             log('stats.compilation.errors.length is "' + chalk.cyan(stats.compilation.errors.length) + '".');
 
             _.forEach(stats.compilation.assets, (asset, assetPath) => {
-                let assetSize,
-                    assetSource,
-                    assetSourceHash,
-                    outputFilePath,
-                    relativeOutputPath,
-                    targetDefinition;
-
-                outputFilePath = path.join(outputPath, assetPath);
-                relativeOutputPath = path.relative(process.cwd(), outputFilePath);
-
-                targetDefinition = 'asset: ' + chalk.cyan('./' + assetPath) + '; destination: ' + chalk.cyan('./' + relativeOutputPath);
+                const outputFilePath = path.join(outputPath, assetPath);
+                const relativeOutputPath = path.relative(process.cwd(), outputFilePath);
+                const targetDefinition = 'asset: ' + chalk.cyan('./' + assetPath) + '; destination: ' + chalk.cyan('./' + relativeOutputPath);
 
                 if (options.test && !options.test.test(assetPath)) {
                     log(targetDefinition, chalk.yellow('[skipped; does not match test]'));
@@ -143,11 +124,11 @@ export default (userOptions = {}) => {
                     return;
                 }
 
-                assetSize = asset.size();
-                assetSource = asset.source();
+                const assetSize = asset.size();
+                const assetSource = asset.source();
 
                 if (options.useHashIndex) {
-                    assetSourceHash = createHash('sha256').update(assetSource).digest('hex');
+                    const assetSourceHash = createHash('sha256').update(assetSource).digest('hex');
 
                     if (assetSourceHashIndex[assetPath] && assetSourceHashIndex[assetPath] === assetSourceHash) {
                         log(targetDefinition, chalk.yellow('[skipped; matched hash index]'));
