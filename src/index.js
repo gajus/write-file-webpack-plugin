@@ -91,7 +91,10 @@ export default (userOptions = {}) => {
             }
 
             // https://github.com/gajus/write-file-webpack-plugin/issues/1
-            if (_.has(compiler, 'options.output.path') && compiler.options.output.path !== path.sep) {
+            // `compiler.options.output.path` will be hardcoded to '/' in
+            // webpack-dev-server's command line wrapper. So it should be
+            // ignored here.
+            if (_.has(compiler, 'options.output.path') && compiler.options.output.path !== '/') {
                 outputPath = compiler.options.output.path;
             }
 
