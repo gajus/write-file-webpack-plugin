@@ -5,7 +5,8 @@
 
 Forces `webpack-dev-server` program to write bundle files to the file system.
 
-This plugin has no effect when `webpack` program is used.
+This plugin has no effect when [`webpack`](https://webpack.github.io/docs/usage.html) program 
+is used instead of [`webpack-dev-server`](https://webpack.github.io/docs/webpack-dev-server.html).
 
 ## Install
 
