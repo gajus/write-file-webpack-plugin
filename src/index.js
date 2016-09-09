@@ -21,8 +21,10 @@ const isMemoryFileSystem = (outputFileSystem: Object): boolean => {
  * @property test A regular expression used to test if file should be written. When not present, all bundle will be written.
  * @property useHashIndex Use hash index to write only files that have changed since the last iteration (default: true).
  * @property log Logs names of the files that are being written (or skipped because they have not changed) (default: true).
+ * @property exitOnErors Stop writing files on webpack errors (default: true).
  */
 type UserOptionsType = {
+    exitOnErrors: ?boolean,
     test: ?RegExp,
     useHashIndex: ?boolean,
     log: ?boolean
@@ -30,6 +32,7 @@ type UserOptionsType = {
 
 export default (userOptions: UserOptionsType = {}): Object => {
     const options = _.assign({}, {
+        exitOnErrors: true,
         log: true,
         test: null,
         useHashIndex: true
@@ -45,6 +48,10 @@ export default (userOptions: UserOptionsType = {}): Object => {
 
     if (!_.isBoolean(options.log)) {
         throw new Error('options.log value must be of boolean type.');
+    }
+
+    if (!_.isBoolean(options.exitOnErrors)) {
+        throw new Error('options.exitOnErrors value must be of boolean type.');
     }
 
     const log = (...append) => {
@@ -107,7 +114,7 @@ export default (userOptions: UserOptionsType = {}): Object => {
                 return;
             }
 
-            if (stats.compilation.errors.length) {
+            if (options.exitOnErrors && stats.compilation.errors.length) {
                 return;
             }
 
