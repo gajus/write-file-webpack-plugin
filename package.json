@@ -26,16 +26,19 @@
   "scripts": {
     "pragmatist": "node ./node_modules/.bin/pragmatist --es5",
     "test": "npm run pragmatist test",
-    "build": "npm run pragmatist build",
     "watch": "npm run pragmatist watch",
     "watch-lint": "npm run pragmatist watch-lint",
     "watch-test": "npm run pragmatist watch-test",
     "watch-build": "npm run pragmatist watch-build",
     "lint": "eslint ./src",
+    "build": "babel --source-maps --copy-files ./src --out-dir ./dist",
     "readme": "node ./node_modules/.bin/gitdown ./.README/README.md --output-file ./README.md"
   },
   "devDependencies": {
     "pragmatist": "^3.0.16",
+    "babel-cli": "^6.18.0",
+    "babel-plugin-add-module-exports": "^0.2.1",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.18.0",
     "eslint": "^3.9.1",
     "eslint-config-canonical": "^4.0.0",
     "webpack": "^2.1.0-beta.4",
