@@ -27,7 +27,7 @@
     "lint": "eslint ./src",
     "build": "babel --source-maps --copy-files ./src --out-dir ./dist",
     "test": "echo 'Please add tests :-('",
-    "readme": "node ./node_modules/.bin/gitdown ./.README/README.md --output-file ./README.md",
+    "readme": "gitdown ./.README/README.md --output-file ./README.md",
     "precommit": "npm run lint && npm run test"
   },
   "devDependencies": {
