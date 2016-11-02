@@ -25,13 +25,13 @@
   },
   "scripts": {
     "pragmatist": "node ./node_modules/.bin/pragmatist --es5",
-    "test": "npm run pragmatist test",
     "watch": "npm run pragmatist watch",
     "watch-lint": "npm run pragmatist watch-lint",
     "watch-test": "npm run pragmatist watch-test",
     "watch-build": "npm run pragmatist watch-build",
     "lint": "eslint ./src",
     "build": "babel --source-maps --copy-files ./src --out-dir ./dist",
+    "test": "echo 'Please add tests :-('",
     "readme": "node ./node_modules/.bin/gitdown ./.README/README.md --output-file ./README.md"
   },
   "devDependencies": {
