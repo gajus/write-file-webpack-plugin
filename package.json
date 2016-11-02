@@ -27,7 +27,8 @@
     "lint": "eslint ./src",
     "build": "babel --source-maps --copy-files ./src --out-dir ./dist",
     "test": "echo 'Please add tests :-('",
-    "readme": "node ./node_modules/.bin/gitdown ./.README/README.md --output-file ./README.md"
+    "readme": "node ./node_modules/.bin/gitdown ./.README/README.md --output-file ./README.md",
+    "precommit": "npm run lint && npm run test"
   },
   "devDependencies": {
     "babel-cli": "^6.18.0",
@@ -35,6 +36,7 @@
     "babel-plugin-transform-es2015-modules-commonjs": "^6.18.0",
     "eslint": "^3.9.1",
     "eslint-config-canonical": "^4.0.0",
+    "husky": "^0.11.9",
     "webpack": "^2.1.0-beta.4",
     "webpack-dev-server": "^2.0.0-beta"
   },
