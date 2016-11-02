@@ -20,6 +20,9 @@
     "write",
     "file"
   ],
+  "engines": {
+    "node": ">=5"
+  },
   "scripts": {
     "pragmatist": "node ./node_modules/.bin/pragmatist --es5",
     "lint": "npm run pragmatist lint",
