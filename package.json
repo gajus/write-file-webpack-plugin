@@ -25,17 +25,19 @@
   },
   "scripts": {
     "pragmatist": "node ./node_modules/.bin/pragmatist --es5",
-    "lint": "npm run pragmatist lint",
     "test": "npm run pragmatist test",
     "build": "npm run pragmatist build",
     "watch": "npm run pragmatist watch",
     "watch-lint": "npm run pragmatist watch-lint",
     "watch-test": "npm run pragmatist watch-test",
     "watch-build": "npm run pragmatist watch-build",
+    "lint": "eslint ./src",
     "readme": "node ./node_modules/.bin/gitdown ./.README/README.md --output-file ./README.md"
   },
   "devDependencies": {
     "pragmatist": "^3.0.16",
+    "eslint": "^3.9.1",
+    "eslint-config-canonical": "^4.0.0",
     "webpack": "^2.1.0-beta.4",
     "webpack-dev-server": "^2.0.0-beta"
   },
