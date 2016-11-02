@@ -35,7 +35,8 @@ export default (userOptions: UserOptionsType = {}): Object => {
         exitOnErrors: true,
         log: true,
         test: null,
-        useHashIndex: true
+        useHashIndex: true,
+        force: false
     }, userOptions);
 
     if (!_.isNull(options.test) && !_.isRegExp(options.test)) {
@@ -52,6 +53,10 @@ export default (userOptions: UserOptionsType = {}): Object => {
 
     if (!_.isBoolean(options.exitOnErrors)) {
         throw new Error('options.exitOnErrors value must be of boolean type.');
+    }
+
+    if (!_.isBoolean(options.force)) {
+        throw new Error('options.force value must be of boolean type.');
     }
 
     const log = (...append) => {
@@ -82,7 +87,7 @@ export default (userOptions: UserOptionsType = {}): Object => {
 
             log('compiler.outputFileSystem is "' + chalk.cyan(compiler.outputFileSystem.constructor.name) + '".');
 
-            if (!isMemoryFileSystem(compiler.outputFileSystem)) {
+            if (!isMemoryFileSystem(compiler.outputFileSystem) && !options.force) {
                 return false;
             }
 
