@@ -24,10 +24,10 @@ const isMemoryFileSystem = (outputFileSystem: Object): boolean => {
  * @property exitOnErors Stop writing files on webpack errors (default: true).
  */
 type UserOptionsType = {
-    exitOnErrors: ?boolean,
-    test: ?RegExp,
-    useHashIndex: ?boolean,
-    log: ?boolean
+  exitOnErrors: ?boolean,
+  test: ?RegExp,
+  useHashIndex: ?boolean,
+  log: ?boolean
 };
 
 export default (userOptions: UserOptionsType = {}): Object => {
@@ -64,10 +64,8 @@ export default (userOptions: UserOptionsType = {}): Object => {
       return;
     }
 
-        /* eslint-disable no-console */
+    // eslint-disable-next-line no-console
     console.log(chalk.dim('[' + moment().format('HH:mm:ss') + '] [write-file-webpack-plugin]'), ...append);
-
-        /* eslint-enable no-console */
   };
 
   const assetSourceHashIndex = {};
@@ -92,10 +90,10 @@ export default (userOptions: UserOptionsType = {}): Object => {
         return false;
       }
 
-            // https://github.com/gajus/write-file-webpack-plugin/issues/1
-            // `compiler.options.output.path` will be hardcoded to '/' in
-            // webpack-dev-server's command line wrapper. So it should be
-            // ignored here.
+      // https://github.com/gajus/write-file-webpack-plugin/issues/1
+      // `compiler.options.output.path` will be hardcoded to '/' in
+      // webpack-dev-server's command line wrapper. So it should be
+      // ignored here.
       if (_.has(compiler, 'options.output.path') && compiler.options.output.path !== '/') {
         outputPath = compiler.options.output.path;
       }
