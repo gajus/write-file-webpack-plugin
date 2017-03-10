@@ -20,10 +20,10 @@ const isMemoryFileSystem = (outputFileSystem: Object): boolean => {
 /**
  * @typedef {Object} options
  * @property {boolean} exitOnErrors Stop writing files on webpack errors (default: true).
+ * @property {boolean} force Forces the execution of the plugin regardless of being using `webpack-dev-server` or not (default: false).
+ * @property {boolean} log Logs names of the files that are being written (or skipped because they have not changed) (default: true).
  * @property {RegExp} test A regular expression used to test if file should be written. When not present, all bundle will be written.
  * @property {boolean} useHashIndex Use hash index to write only files that have changed since the last iteration (default: true).
- * @property {boolean} log Logs names of the files that are being written (or skipped because they have not changed) (default: true).
- * @property {boolean} force Forces the execution of the plugin regardless of being using `webpack-dev-server` or not (default: false).
  */
 type UserOptionsType = {
   exitOnErrors: ?boolean,
@@ -46,20 +46,20 @@ export default (userOptions: UserOptionsType = {}): Object => {
     throw new Error('options.exitOnErrors value must be of boolean type.');
   }
 
-  if (!_.isNull(options.test) && !_.isRegExp(options.test)) {
-    throw new Error('options.test value must be an instance of RegExp.');
-  }
-
-  if (!_.isBoolean(options.useHashIndex)) {
-    throw new Error('options.useHashIndex value must be of boolean type.');
+  if (!_.isBoolean(options.force)) {
+    throw new Error('options.force value must be of boolean type.');
   }
 
   if (!_.isBoolean(options.log)) {
     throw new Error('options.log value must be of boolean type.');
   }
 
-  if (!_.isBoolean(options.force)) {
-    throw new Error('options.force value must be of boolean type.');
+  if (!_.isNull(options.test) && !_.isRegExp(options.test)) {
+    throw new Error('options.test value must be an instance of RegExp.');
+  }
+
+  if (!_.isBoolean(options.useHashIndex)) {
+    throw new Error('options.useHashIndex value must be of boolean type.');
   }
 
   const log = (...append) => {
