@@ -1,7 +1,7 @@
 {
   "name": "write-file-webpack-plugin",
   "license": "BSD-3-Clause",
-  "version": "3.4.2",
+  "version": "4.0.0",
   "description": "Forces webpack-dev-server to write bundle files to the file system.",
   "main": "./dist/index.js",
   "author": {
