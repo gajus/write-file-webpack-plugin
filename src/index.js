@@ -18,16 +18,19 @@ const isMemoryFileSystem = (outputFileSystem: Object): boolean => {
 };
 
 /**
- * @property test A regular expression used to test if file should be written. When not present, all bundle will be written.
- * @property useHashIndex Use hash index to write only files that have changed since the last iteration (default: true).
- * @property log Logs names of the files that are being written (or skipped because they have not changed) (default: true).
- * @property exitOnErors Stop writing files on webpack errors (default: true).
+ * @typedef {Object} options
+ * @property {boolean} exitOnErrors Stop writing files on webpack errors (default: true).
+ * @property {boolean} force Forces the execution of the plugin regardless of being using `webpack-dev-server` or not (default: false).
+ * @property {boolean} log Logs names of the files that are being written (or skipped because they have not changed) (default: true).
+ * @property {RegExp} test A regular expression used to test if file should be written. When not present, all bundle will be written.
+ * @property {boolean} useHashIndex Use hash index to write only files that have changed since the last iteration (default: true).
  */
 type UserOptionsType = {
   exitOnErrors: ?boolean,
   test: ?RegExp,
   useHashIndex: ?boolean,
-  log: ?boolean
+  log: ?boolean,
+  force: ?boolean
 };
 
 export default (userOptions: UserOptionsType = {}): Object => {
@@ -39,24 +42,24 @@ export default (userOptions: UserOptionsType = {}): Object => {
     useHashIndex: true
   }, userOptions);
 
-  if (!_.isNull(options.test) && !_.isRegExp(options.test)) {
-    throw new Error('options.test value must be an instance of RegExp.');
-  }
-
-  if (!_.isBoolean(options.useHashIndex)) {
-    throw new Error('options.useHashIndex value must be of boolean type.');
-  }
-
-  if (!_.isBoolean(options.log)) {
-    throw new Error('options.log value must be of boolean type.');
-  }
-
   if (!_.isBoolean(options.exitOnErrors)) {
     throw new Error('options.exitOnErrors value must be of boolean type.');
   }
 
   if (!_.isBoolean(options.force)) {
     throw new Error('options.force value must be of boolean type.');
+  }
+
+  if (!_.isBoolean(options.log)) {
+    throw new Error('options.log value must be of boolean type.');
+  }
+
+  if (!_.isNull(options.test) && !_.isRegExp(options.test)) {
+    throw new Error('options.test value must be an instance of RegExp.');
+  }
+
+  if (!_.isBoolean(options.useHashIndex)) {
+    throw new Error('options.useHashIndex value must be of boolean type.');
   }
 
   const log = (...append) => {
@@ -90,23 +93,15 @@ export default (userOptions: UserOptionsType = {}): Object => {
         return false;
       }
 
-      // https://github.com/gajus/write-file-webpack-plugin/issues/1
-      // `compiler.options.output.path` will be hardcoded to '/' in
-      // webpack-dev-server's command line wrapper. So it should be
-      // ignored here.
       if (_.has(compiler, 'options.output.path') && compiler.options.output.path !== '/') {
         outputPath = compiler.options.output.path;
       }
 
       if (!outputPath) {
-        if (!_.has(compiler, 'options.devServer.outputPath')) {
-          throw new Error('output.path is not accessible and devServer.outputPath is not defined. Define devServer.outputPath.');
-        }
-
-        outputPath = compiler.options.devServer.outputPath;
+        throw new Error('output.path is not. Define output.path.');
       }
 
-      log('compiler.options.devServer.outputPath is "' + chalk.cyan(outputPath) + '".');
+      log('outputPath is "' + chalk.cyan(outputPath) + '".');
 
       setupStatus = true;
 

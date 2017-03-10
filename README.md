@@ -5,7 +5,7 @@
 
 Forces `webpack-dev-server` program to write bundle files to the file system.
 
-This plugin has no effect when [`webpack`](https://webpack.github.io/docs/usage.html) program 
+This plugin has no effect when [`webpack`](https://webpack.github.io/docs/usage.html) program
 is used instead of [`webpack-dev-server`](https://webpack.github.io/docs/webpack-dev-server.html).
 
 ## Install
@@ -19,10 +19,11 @@ npm install write-file-webpack-plugin --save-dev
 ```js
 /**
  * @typedef {Object} options
+ * @property {boolean} exitOnErrors Stop writing files on webpack errors (default: true).
+ * @property {boolean} force Forces the execution of the plugin regardless of being using `webpack-dev-server` or not (default: false).
+ * @property {boolean} log Logs names of the files that are being written (or skipped because they have not changed) (default: true).
  * @property {RegExp} test A regular expression used to test if file should be written. When not present, all bundle will be written.
  * @property {boolean} useHashIndex Use hash index to write only files that have changed since the last iteration (default: true).
- * @property {boolean} log Logs names of the files that are being written (or skipped because they have not changed) (default: true).
- * @property {boolean} force Forces the execution of the plugin regardless of being using `webpack-dev-server` or not (default: false).
  */
 
 /**
@@ -42,16 +43,11 @@ new WriteFilePlugin({
 
 Configure [`webpack.config.js`](https://webpack.github.io/docs/configuration.html) to use the `write-file-webpack-plugin` plugin.
 
-You must add `outputPath` property to the `devServer` configuration (For explanation see https://github.com/gajus/write-file-webpack-plugin/issues/1). `devServer.outputPath` value must be equal to `output.path` configuration value.
-
 ```js
 import path from 'path';
 import WriteFilePlugin from 'write-file-webpack-plugin';
 
 export default {
-    devServer: {
-        outputPath: path.join(__dirname, './dist')
-    },
     output: {
         path: path.join(__dirname, './dist')
     },
