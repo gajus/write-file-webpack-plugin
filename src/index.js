@@ -93,8 +93,8 @@ export default (userOptions: UserOptionsType = {}): Object => {
         return false;
       }
 
-      if (_.has(compiler, 'options.output.path') && compiler.options.output.path !== '/') {
-        outputPath = compiler.options.output.path;
+      if (options.outputPath) {
+        outputPath = options.outputPath;
       }
 
       if (!outputPath) {

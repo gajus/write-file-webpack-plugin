@@ -5,7 +5,7 @@ var devServer,
 
 webpack = require('webpack');
 path = require('path');
-WriteFileWebpackPlugin = require('./../dist').default;
+WriteFileWebpackPlugin = require('./../dist');
 
 devServer = {
     outputPath: path.join(__dirname, './dist'),
@@ -36,7 +36,8 @@ module.exports = {
     },
     plugins: [
         new WriteFileWebpackPlugin({
-            test: /foo/
+            test: /foo/,
+            outputPath: devServer.outputPath,
         })
     ]
 };

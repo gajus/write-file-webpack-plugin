@@ -52,7 +52,9 @@ export default {
         path: path.join(__dirname, './dist')
     },
     plugins: [
-        new WriteFilePlugin()
+        new WriteFilePlugin(
+            outputPath: path.join(__dirname, './dist')
+        )
     ],
     // ...
 }
