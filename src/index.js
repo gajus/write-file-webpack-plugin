@@ -98,7 +98,7 @@ export default (userOptions: UserOptionsType = {}): Object => {
       }
 
       if (!outputPath) {
-        throw new Error('output.path is not. Define output.path.');
+        throw new Error('output.path is not defined. Define output.path.');
       }
 
       log('outputPath is "' + chalk.cyan(outputPath) + '".');
@@ -131,7 +131,7 @@ export default (userOptions: UserOptionsType = {}): Object => {
         }
 
         const assetSize = asset.size();
-        const assetSource = asset.source();
+        const assetSource = Array.isArray(asset.source()) ? asset.source().join("\n") : asset.source();
 
         if (options.useHashIndex) {
           const assetSourceHash = createHash('sha256').update(assetSource).digest('hex');
