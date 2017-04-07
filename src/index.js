@@ -120,7 +120,7 @@ export default (userOptions: UserOptionsType = {}): Object => {
       log('stats.compilation.errors.length is "' + chalk.cyan(stats.compilation.errors.length) + '".');
 
       _.forEach(stats.compilation.assets, (asset, assetPath) => {
-        const outputFilePath = path.join(outputPath, assetPath);
+        const outputFilePath = path.isAbsolute(assetPath) ? assetPath : path.join(outputPath, assetPath);
         const relativeOutputPath = path.relative(process.cwd(), outputFilePath);
         const targetDefinition = 'asset: ' + chalk.cyan('./' + assetPath) + '; destination: ' + chalk.cyan('./' + relativeOutputPath);
 
