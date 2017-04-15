@@ -131,7 +131,7 @@ export default (userOptions: UserOptionsType = {}): Object => {
         }
 
         const assetSize = asset.size();
-        const assetSource = Array.isArray(asset.source()) ? asset.source().join("\n") : asset.source();
+        const assetSource = Array.isArray(asset.source()) ? asset.source().join('\n') : asset.source();
 
         if (options.useHashIndex) {
           const assetSourceHash = createHash('sha256').update(assetSource).digest('hex');
