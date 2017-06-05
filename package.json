@@ -45,6 +45,7 @@
   },
   "dependencies": {
     "chalk": "^1.1.1",
+    "debug": "^2.6.8",
     "filesize": "^3.2.1",
     "lodash": "^4.5.1",
     "mkdirp": "^0.5.1",

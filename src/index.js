@@ -8,6 +8,9 @@ import mkdirp from 'mkdirp';
 import chalk from 'chalk';
 import moment from 'moment';
 import filesize from 'filesize';
+import createDebug from 'debug';
+
+const debug = createDebug('write-file-webpack-plugin');
 
 /**
  * When 'webpack' program is used, constructor name is equal to 'NodeOutputFileSystem'.
@@ -67,8 +70,7 @@ export default (userOptions: UserOptionsType = {}): Object => {
       return;
     }
 
-    // eslint-disable-next-line no-console
-    console.log(chalk.dim('[' + moment().format('HH:mm:ss') + '] [write-file-webpack-plugin]'), ...append);
+    debug(chalk.dim('[' + moment().format('HH:mm:ss') + '] [write-file-webpack-plugin]'), ...append);
   };
 
   const assetSourceHashIndex = {};
