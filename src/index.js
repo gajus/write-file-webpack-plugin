@@ -147,11 +147,15 @@ export default (userOptions: UserOptionsType = {}): Object => {
           assetSourceHashIndex[assetPath] = assetSourceHash;
         }
 
-        log(targetDefinition, chalk.green('[written]'), chalk.magenta('(' + filesize(assetSize) + ')'));
-
         mkdirp.sync(path.dirname(relativeOutputPath));
 
-        fs.writeFileSync(relativeOutputPath.split('?')[0], assetSource);
+        try {
+          fs.writeFileSync(relativeOutputPath.split('?')[0], assetSource);
+          log(targetDefinition, chalk.green('[written]'), chalk.magenta('(' + filesize(assetSize) + ')'));
+        } catch (exp) {
+          log(targetDefinition, chalk.bold.red('[is not written]'), chalk.magenta('(' + filesize(assetSize) + ')'));
+          log(chalk.bold.bgRed('Exception:'), chalk.bold.red(exp.message));
+        }
       });
     });
   };
