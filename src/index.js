@@ -6,7 +6,6 @@ import path from 'path';
 import _ from 'lodash';
 import mkdirp from 'mkdirp';
 import chalk from 'chalk';
-import moment from 'moment';
 import filesize from 'filesize';
 import createDebug from 'debug';
 
@@ -70,7 +69,7 @@ export default (userOptions: UserOptionsType = {}): Object => {
       return;
     }
 
-    debug(chalk.dim('[' + moment().format('HH:mm:ss') + '] [write-file-webpack-plugin]'), ...append);
+    debug(chalk.dim('[' + new Date().toISOString().slice(11, 19) + '] [write-file-webpack-plugin]'), ...append);
   };
 
   const assetSourceHashIndex = {};
