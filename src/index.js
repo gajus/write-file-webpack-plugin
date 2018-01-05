@@ -110,18 +110,22 @@ export default (userOptions: UserOptionsType = {}): Object => {
       return setupStatus;
     };
 
-    compiler.plugin('done', (stats) => {
+    compiler.plugin('after-emit', (compilation, callback) => {
       if (!setup()) {
+        callback('write-file-webpack-plugin couldn\'t setup.');
+
         return;
       }
 
-      if (options.exitOnErrors && stats.compilation.errors.length) {
+      if (options.exitOnErrors && compilation.errors.length) {
+        callback(compilation.errors);
+
         return;
       }
 
-      log('stats.compilation.errors.length is "' + chalk.cyan(stats.compilation.errors.length) + '".');
+      log('compilation.errors.length is "' + chalk.cyan(compilation.errors.length) + '".');
 
-      _.forEach(stats.compilation.assets, (asset, assetPath) => {
+      _.forEach(compilation.assets, (asset, assetPath) => {
         const outputFilePath = path.isAbsolute(assetPath) ? assetPath : path.join(outputPath, assetPath);
         const relativeOutputPath = path.relative(process.cwd(), outputFilePath);
         const targetDefinition = 'asset: ' + chalk.cyan('./' + assetPath) + '; destination: ' + chalk.cyan('./' + relativeOutputPath);
@@ -157,6 +161,7 @@ export default (userOptions: UserOptionsType = {}): Object => {
           log(chalk.bold.bgRed('Exception:'), chalk.bold.red(exp.message));
         }
       });
+      callback();
     });
   };
 

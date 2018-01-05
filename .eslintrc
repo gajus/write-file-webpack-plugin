@@ -1,3 +1,6 @@
 {
-  "extends": "canonical"
+  "extends": "canonical",
+  "rules": {
+    "promise/prefer-await-to-callbacks": "off",
+  }
 }
