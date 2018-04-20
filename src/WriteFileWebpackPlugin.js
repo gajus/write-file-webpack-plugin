@@ -108,7 +108,7 @@ export default function WriteFileWebpackPlugin (userOptions: UserOptionsType = {
       return setupStatus;
     };
 
-    compiler.plugin('done', (stats) => {
+    const handleDone = (stats) => {
       if (!setup()) {
         return;
       }
@@ -155,7 +155,22 @@ export default function WriteFileWebpackPlugin (userOptions: UserOptionsType = {
           log(chalk.bold.bgRed('Exception:'), chalk.bold.red(error.message));
         }
       });
-    });
+    };
+
+    /**
+     * webpack 4+ comes with a new plugin system.
+     *
+     * Check for hooks in-order to support old plugin system
+     */
+    if (compiler.hooks) {
+      compiler.hooks.done.tap('write-file-webpack-plugin', (stats) => {
+        handleDone(stats);
+      });
+    } else {
+      compiler.plugin('done', (stats) => {
+        handleDone(stats);
+      });
+    }
   };
 
   return {
