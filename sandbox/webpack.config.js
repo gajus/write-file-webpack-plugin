@@ -1,7 +1,7 @@
 'use strict';
 
 const path = require('path');
-const WriteFileWebpackPlugin = require('./../dist');
+const WriteFileWebpackPlugin = require('./../dist/WriteFileWebpackPlugin.js');
 const del = require('del');
 
 const outputPath = path.join(__dirname, './dist');

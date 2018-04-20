@@ -1,7 +1,5 @@
 import fs from 'fs';
-import {
-    createHash
-} from 'crypto';
+import {createHash} from 'crypto';
 import path from 'path';
 import _ from 'lodash';
 import mkdirp from 'mkdirp';
@@ -36,7 +34,7 @@ type UserOptionsType = {
   force: ?boolean
 };
 
-export default (userOptions: UserOptionsType = {}): Object => {
+export default function WriteFileWebpackPlugin (userOptions: UserOptionsType = {}): Object {
   const options = _.assign({}, {
     exitOnErrors: true,
     force: false,
@@ -46,23 +44,23 @@ export default (userOptions: UserOptionsType = {}): Object => {
   }, userOptions);
 
   if (!_.isBoolean(options.exitOnErrors)) {
-    throw new Error('options.exitOnErrors value must be of boolean type.');
+    throw new TypeError('options.exitOnErrors value must be of boolean type.');
   }
 
   if (!_.isBoolean(options.force)) {
-    throw new Error('options.force value must be of boolean type.');
+    throw new TypeError('options.force value must be of boolean type.');
   }
 
   if (!_.isBoolean(options.log)) {
-    throw new Error('options.log value must be of boolean type.');
+    throw new TypeError('options.log value must be of boolean type.');
   }
 
   if (!_.isNull(options.test) && !_.isRegExp(options.test)) {
-    throw new Error('options.test value must be an instance of RegExp.');
+    throw new TypeError('options.test value must be an instance of RegExp.');
   }
 
   if (!_.isBoolean(options.useHashIndex)) {
-    throw new Error('options.useHashIndex value must be of boolean type.');
+    throw new TypeError('options.useHashIndex value must be of boolean type.');
   }
 
   const log = (...append) => {
@@ -78,9 +76,9 @@ export default (userOptions: UserOptionsType = {}): Object => {
   log('options', options);
 
   const apply = (compiler) => {
-    let outputPath,
-      setupDone,
-      setupStatus;
+    let outputPath;
+    let setupDone;
+    let setupStatus;
 
     const setup = (): boolean => {
       if (setupDone) {
@@ -152,9 +150,9 @@ export default (userOptions: UserOptionsType = {}): Object => {
         try {
           fs.writeFileSync(relativeOutputPath.split('?')[0], assetSource);
           log(targetDefinition, chalk.green('[written]'), chalk.magenta('(' + filesize(assetSize) + ')'));
-        } catch (exp) {
+        } catch (error) {
           log(targetDefinition, chalk.bold.red('[is not written]'), chalk.magenta('(' + filesize(assetSize) + ')'));
-          log(chalk.bold.bgRed('Exception:'), chalk.bold.red(exp.message));
+          log(chalk.bold.bgRed('Exception:'), chalk.bold.red(error.message));
         }
       });
     });
@@ -163,4 +161,4 @@ export default (userOptions: UserOptionsType = {}): Object => {
   return {
     apply
   };
-};
+}
