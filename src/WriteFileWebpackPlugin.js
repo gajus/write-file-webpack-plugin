@@ -23,7 +23,7 @@ const isMemoryFileSystem = (outputFileSystem: Object): boolean => {
  * @property {boolean} exitOnErrors Stop writing files on webpack errors (default: true).
  * @property {boolean} force Forces the execution of the plugin regardless of being using `webpack-dev-server` or not (default: false).
  * @property {boolean} log Logs names of the files that are being written (or skipped because they have not changed) (default: true).
- * @property {RegExp} test A regular expression used to test if file should be written. When not present, all bundle will be written.
+ * @property {RegExp} test A regular expression or function used to test if file should be written. When not present, all bundle will be written.
  * @property {boolean} useHashIndex Use hash index to write only files that have changed since the last iteration (default: true).
  */
 type UserOptionsType = {
@@ -55,8 +55,8 @@ export default function WriteFileWebpackPlugin (userOptions: UserOptionsType = {
     throw new TypeError('options.log value must be of boolean type.');
   }
 
-  if (!_.isNull(options.test) && !_.isRegExp(options.test)) {
-    throw new TypeError('options.test value must be an instance of RegExp.');
+  if (!_.isNull(options.test) && !(_.isRegExp(options.test) || _.isFunction(options.test))) {
+    throw new TypeError('options.test value must be an instance of RegExp or Function.');
   }
 
   if (!_.isBoolean(options.useHashIndex)) {
@@ -124,10 +124,16 @@ export default function WriteFileWebpackPlugin (userOptions: UserOptionsType = {
         const relativeOutputPath = path.relative(process.cwd(), outputFilePath);
         const targetDefinition = 'asset: ' + chalk.cyan('./' + assetPath) + '; destination: ' + chalk.cyan('./' + relativeOutputPath);
 
-        if (options.test && !options.test.test(assetPath)) {
-          log(targetDefinition, chalk.yellow('[skipped; does not match test]'));
+        const test = options.test;
 
-          return;
+        if (test) {
+          const skip = _.isRegExp(test) ? !test.test(assetPath) : !test(assetPath);
+
+          if (skip) {
+            log(targetDefinition, chalk.yellow('[skipped; does not match test]'));
+
+            return;
+          }
         }
 
         const assetSize = asset.size();
