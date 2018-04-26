@@ -1,7 +1,5 @@
 import fs from 'fs';
-import {
-    createHash
-} from 'crypto';
+import {createHash} from 'crypto';
 import path from 'path';
 import _ from 'lodash';
 import mkdirp from 'mkdirp';
@@ -25,7 +23,7 @@ const isMemoryFileSystem = (outputFileSystem: Object): boolean => {
  * @property {boolean} exitOnErrors Stop writing files on webpack errors (default: true).
  * @property {boolean} force Forces the execution of the plugin regardless of being using `webpack-dev-server` or not (default: false).
  * @property {boolean} log Logs names of the files that are being written (or skipped because they have not changed) (default: true).
- * @property {RegExp} test A regular expression used to test if file should be written. When not present, all bundle will be written.
+ * @property {RegExp} test A regular expression or function used to test if file should be written. When not present, all bundle will be written.
  * @property {boolean} useHashIndex Use hash index to write only files that have changed since the last iteration (default: true).
  */
 type UserOptionsType = {
@@ -36,7 +34,7 @@ type UserOptionsType = {
   force: ?boolean
 };
 
-export default (userOptions: UserOptionsType = {}): Object => {
+export default function WriteFileWebpackPlugin (userOptions: UserOptionsType = {}): Object {
   const options = _.assign({}, {
     exitOnErrors: true,
     force: false,
@@ -46,23 +44,23 @@ export default (userOptions: UserOptionsType = {}): Object => {
   }, userOptions);
 
   if (!_.isBoolean(options.exitOnErrors)) {
-    throw new Error('options.exitOnErrors value must be of boolean type.');
+    throw new TypeError('options.exitOnErrors value must be of boolean type.');
   }
 
   if (!_.isBoolean(options.force)) {
-    throw new Error('options.force value must be of boolean type.');
+    throw new TypeError('options.force value must be of boolean type.');
   }
 
   if (!_.isBoolean(options.log)) {
-    throw new Error('options.log value must be of boolean type.');
+    throw new TypeError('options.log value must be of boolean type.');
   }
 
-  if (!_.isNull(options.test) && !_.isRegExp(options.test)) {
-    throw new Error('options.test value must be an instance of RegExp.');
+  if (!_.isNull(options.test) && !(_.isRegExp(options.test) || _.isFunction(options.test))) {
+    throw new TypeError('options.test value must be an instance of RegExp or Function.');
   }
 
   if (!_.isBoolean(options.useHashIndex)) {
-    throw new Error('options.useHashIndex value must be of boolean type.');
+    throw new TypeError('options.useHashIndex value must be of boolean type.');
   }
 
   const log = (...append) => {
@@ -78,9 +76,9 @@ export default (userOptions: UserOptionsType = {}): Object => {
   log('options', options);
 
   const apply = (compiler) => {
-    let outputPath,
-      setupDone,
-      setupStatus;
+    let outputPath;
+    let setupDone;
+    let setupStatus;
 
     const setup = (): boolean => {
       if (setupDone) {
@@ -110,9 +108,9 @@ export default (userOptions: UserOptionsType = {}): Object => {
       return setupStatus;
     };
 
-    compiler.plugin('after-emit', (compilation, callback) => {
+    const handleAfterEmit = (compilation, callback) => {
       if (!setup()) {
-        callback('write-file-webpack-plugin couldn\'t setup.');
+        callback(new Error('write-file-webpack-plugin couldn\'t setup.'));
 
         return;
       }
@@ -130,10 +128,16 @@ export default (userOptions: UserOptionsType = {}): Object => {
         const relativeOutputPath = path.relative(process.cwd(), outputFilePath);
         const targetDefinition = 'asset: ' + chalk.cyan('./' + assetPath) + '; destination: ' + chalk.cyan('./' + relativeOutputPath);
 
-        if (options.test && !options.test.test(assetPath)) {
-          log(targetDefinition, chalk.yellow('[skipped; does not match test]'));
+        const test = options.test;
 
-          return;
+        if (test) {
+          const skip = _.isRegExp(test) ? !test.test(assetPath) : !test(assetPath);
+
+          if (skip) {
+            log(targetDefinition, chalk.yellow('[skipped; does not match test]'));
+
+            return;
+          }
         }
 
         const assetSize = asset.size();
@@ -156,16 +160,27 @@ export default (userOptions: UserOptionsType = {}): Object => {
         try {
           fs.writeFileSync(relativeOutputPath.split('?')[0], assetSource);
           log(targetDefinition, chalk.green('[written]'), chalk.magenta('(' + filesize(assetSize) + ')'));
-        } catch (exp) {
+        } catch (error) {
           log(targetDefinition, chalk.bold.red('[is not written]'), chalk.magenta('(' + filesize(assetSize) + ')'));
-          log(chalk.bold.bgRed('Exception:'), chalk.bold.red(exp.message));
+          log(chalk.bold.bgRed('Exception:'), chalk.bold.red(error.message));
         }
       });
       callback();
-    });
+    };
+
+    /**
+     * webpack 4+ comes with a new plugin system.
+     *
+     * Check for hooks in-order to support old plugin system
+     */
+    if (compiler.hooks) {
+      compiler.hooks.afterEmit.tap('write-file-webpack-plugin', handleAfterEmit);
+    } else {
+      compiler.plugin('after-emit', handleAfterEmit);
+    }
   };
 
   return {
     apply
   };
-};
+}

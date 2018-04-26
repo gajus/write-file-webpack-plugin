@@ -1,9 +1,13 @@
 {
+  "presets": [
+    ["env", {
+      "targets": {
+        "node": 4
+      }
+    }]
+  ],
   "plugins": [
     "add-module-exports",
-    "transform-es2015-modules-commonjs",
-    "transform-flow-strip-types",
-    "transform-es2015-parameters",
-    "transform-es2015-spread"
+    "transform-flow-strip-types"
   ]
 }

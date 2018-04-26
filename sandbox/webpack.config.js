@@ -1,28 +1,27 @@
-var devServer,
-    webpack,
-    path,
-    WriteFileWebpackPlugin;
+'use strict';
 
-webpack = require('webpack');
-path = require('path');
-WriteFileWebpackPlugin = require('./../dist').default;
+const path = require('path');
+const WriteFileWebpackPlugin = require('./../dist/WriteFileWebpackPlugin.js');
+const del = require('del');
 
-devServer = {
-    outputPath: path.join(__dirname, './dist'),
+const outputPath = path.join(__dirname, './dist');
+const publicPath = '/static/';
+const devServer = {
     contentBase: path.resolve(__dirname, './src'),
-    colors: true,
     quiet: false,
     noInfo: false,
-    publicPath: '/static/',
+    publicPath,
     historyApiFallback: true,
     host: '127.0.0.1',
     port: 8000,
     hot: false
 };
 
+del.sync(path.join(outputPath, '**/*'));
+
 module.exports = {
+    mode: 'development',
     devtool: 'source-map',
-    debug: false,
     devServer: devServer,
     context: path.resolve(__dirname, './src'),
     entry: {
@@ -30,9 +29,9 @@ module.exports = {
         bar: './app'
     },
     output: {
-        path: devServer.outputPath,
+        path: outputPath,
         filename: '[name].js',
-        publicPath: devServer.publicPath
+        publicPath
     },
     plugins: [
         new WriteFileWebpackPlugin({
