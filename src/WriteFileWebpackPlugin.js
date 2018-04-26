@@ -108,18 +108,25 @@ export default function WriteFileWebpackPlugin (userOptions: UserOptionsType = {
       return setupStatus;
     };
 
-    const handleDone = (stats) => {
+    // eslint-disable-next-line promise/prefer-await-to-callbacks
+    const handleAfterEmit = (compilation, callback) => {
       if (!setup()) {
+        // eslint-disable-next-line promise/prefer-await-to-callbacks
+        callback(new Error('write-file-webpack-plugin couldn\'t setup.'));
+
         return;
       }
 
-      if (options.exitOnErrors && stats.compilation.errors.length) {
+      if (options.exitOnErrors && compilation.errors.length) {
+        // eslint-disable-next-line promise/prefer-await-to-callbacks
+        callback(compilation.errors);
+
         return;
       }
 
-      log('stats.compilation.errors.length is "' + chalk.cyan(stats.compilation.errors.length) + '".');
+      log('compilation.errors.length is "' + chalk.cyan(compilation.errors.length) + '".');
 
-      _.forEach(stats.compilation.assets, (asset, assetPath) => {
+      _.forEach(compilation.assets, (asset, assetPath) => {
         const outputFilePath = path.isAbsolute(assetPath) ? assetPath : path.join(outputPath, assetPath);
         const relativeOutputPath = path.relative(process.cwd(), outputFilePath);
         const targetDefinition = 'asset: ' + chalk.cyan('./' + assetPath) + '; destination: ' + chalk.cyan('./' + relativeOutputPath);
@@ -161,6 +168,8 @@ export default function WriteFileWebpackPlugin (userOptions: UserOptionsType = {
           log(chalk.bold.bgRed('Exception:'), chalk.bold.red(error.message));
         }
       });
+      // eslint-disable-next-line promise/prefer-await-to-callbacks
+      callback();
     };
 
     /**
@@ -169,13 +178,9 @@ export default function WriteFileWebpackPlugin (userOptions: UserOptionsType = {
      * Check for hooks in-order to support old plugin system
      */
     if (compiler.hooks) {
-      compiler.hooks.done.tap('write-file-webpack-plugin', (stats) => {
-        handleDone(stats);
-      });
+      compiler.hooks.afterEmit.tap('write-file-webpack-plugin', handleAfterEmit);
     } else {
-      compiler.plugin('done', (stats) => {
-        handleDone(stats);
-      });
+      compiler.plugin('after-emit', handleAfterEmit);
     }
   };
 
