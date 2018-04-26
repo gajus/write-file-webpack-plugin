@@ -108,14 +108,17 @@ export default function WriteFileWebpackPlugin (userOptions: UserOptionsType = {
       return setupStatus;
     };
 
+    // eslint-disable-next-line promise/prefer-await-to-callbacks
     const handleAfterEmit = (compilation, callback) => {
       if (!setup()) {
+        // eslint-disable-next-line promise/prefer-await-to-callbacks
         callback(new Error('write-file-webpack-plugin couldn\'t setup.'));
 
         return;
       }
 
       if (options.exitOnErrors && compilation.errors.length) {
+        // eslint-disable-next-line promise/prefer-await-to-callbacks
         callback(compilation.errors);
 
         return;
@@ -165,6 +168,7 @@ export default function WriteFileWebpackPlugin (userOptions: UserOptionsType = {
           log(chalk.bold.bgRed('Exception:'), chalk.bold.red(error.message));
         }
       });
+      // eslint-disable-next-line promise/prefer-await-to-callbacks
       callback();
     };
 
