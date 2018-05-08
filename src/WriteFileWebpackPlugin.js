@@ -149,13 +149,13 @@ export default function WriteFileWebpackPlugin (userOptions: UserOptionsType = {
         if (options.useHashIndex) {
           const assetSourceHash = createHash('sha256').update(assetSource).digest('hex');
 
-          if (assetSourceHashIndex[assetPath] && assetSourceHashIndex[assetPath] === assetSourceHash) {
+          if (assetSourceHashIndex[relativeOutputPath] && assetSourceHashIndex[relativeOutputPath] === assetSourceHash) {
             log(targetDefinition, chalk.yellow('[skipped; matched hash index]'));
 
             return;
           }
 
-          assetSourceHashIndex[assetPath] = assetSourceHash;
+          assetSourceHashIndex[relativeOutputPath] = assetSourceHash;
         }
 
         mkdirp.sync(path.dirname(relativeOutputPath));
