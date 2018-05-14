@@ -112,7 +112,7 @@ export default function WriteFileWebpackPlugin (userOptions: UserOptionsType = {
     const handleAfterEmit = (compilation, callback) => {
       if (!setup()) {
         // eslint-disable-next-line promise/prefer-await-to-callbacks
-        callback(new Error('write-file-webpack-plugin couldn\'t setup.'));
+        callback();
 
         return;
       }
@@ -178,7 +178,7 @@ export default function WriteFileWebpackPlugin (userOptions: UserOptionsType = {
      * Check for hooks in-order to support old plugin system
      */
     if (compiler.hooks) {
-      compiler.hooks.afterEmit.tap('write-file-webpack-plugin', handleAfterEmit);
+      compiler.hooks.afterEmit.tapAsync('write-file-webpack-plugin', handleAfterEmit);
     } else {
       compiler.plugin('after-emit', handleAfterEmit);
     }
