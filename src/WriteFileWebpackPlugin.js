@@ -119,7 +119,7 @@ export default function WriteFileWebpackPlugin (userOptions: UserOptionsType = {
 
       if (options.exitOnErrors && compilation.errors.length) {
         // eslint-disable-next-line promise/prefer-await-to-callbacks
-        callback(compilation.errors);
+        callback();
 
         return;
       }
