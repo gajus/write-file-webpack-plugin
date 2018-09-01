@@ -19,6 +19,7 @@ npm install write-file-webpack-plugin --save-dev
 ```js
 /**
  * @typedef {Object} options
+ * @property {boolean} atomicReplace Atomically replace files content (i.e., to prevent programs like test watchers from seeing partial files) (default: true).
  * @property {boolean} exitOnErrors Stop writing files on webpack errors (default: true).
  * @property {boolean} force Forces the execution of the plugin regardless of being using `webpack-dev-server` or not (default: false).
  * @property {boolean} log Logs names of the files that are being written (or skipped because they have not changed) (default: true).

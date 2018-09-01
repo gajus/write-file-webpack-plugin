@@ -7,6 +7,7 @@ import chalk from 'chalk';
 import moment from 'moment';
 import filesize from 'filesize';
 import createDebug from 'debug';
+import {sync as writeFileAtomicSync} from 'write-file-atomic';
 
 const debug = createDebug('write-file-webpack-plugin');
 
@@ -20,6 +21,7 @@ const isMemoryFileSystem = (outputFileSystem: Object): boolean => {
 
 /**
  * @typedef {Object} options
+ * @property {boolean} atomicReplace Atomically replace files content (i.e., to prevent programs like test watchers from seeing partial files) (default: true).
  * @property {boolean} exitOnErrors Stop writing files on webpack errors (default: true).
  * @property {boolean} force Forces the execution of the plugin regardless of being using `webpack-dev-server` or not (default: false).
  * @property {boolean} log Logs names of the files that are being written (or skipped because they have not changed) (default: true).
@@ -27,6 +29,7 @@ const isMemoryFileSystem = (outputFileSystem: Object): boolean => {
  * @property {boolean} useHashIndex Use hash index to write only files that have changed since the last iteration (default: true).
  */
 type UserOptionsType = {
+  atomicReplace: ?boolean,
   exitOnErrors: ?boolean,
   test: ?RegExp,
   useHashIndex: ?boolean,
@@ -36,6 +39,7 @@ type UserOptionsType = {
 
 export default function WriteFileWebpackPlugin (userOptions: UserOptionsType = {}): Object {
   const options = _.assign({}, {
+    atomicReplace: true,
     exitOnErrors: true,
     force: false,
     log: true,
@@ -62,6 +66,12 @@ export default function WriteFileWebpackPlugin (userOptions: UserOptionsType = {
   if (!_.isBoolean(options.useHashIndex)) {
     throw new TypeError('options.useHashIndex value must be of boolean type.');
   }
+
+  if (!_.isBoolean(options.atomicReplace)) {
+    throw new TypeError('options.atomicReplace value must be of boolean type.');
+  }
+
+  const writeFileMethod = options.atomicReplace ? writeFileAtomicSync : fs.writeFileSync;
 
   const log = (...append) => {
     if (!options.log) {
@@ -161,7 +171,7 @@ export default function WriteFileWebpackPlugin (userOptions: UserOptionsType = {
         mkdirp.sync(path.dirname(relativeOutputPath));
 
         try {
-          fs.writeFileSync(relativeOutputPath.split('?')[0], assetSource);
+          writeFileMethod(relativeOutputPath.split('?')[0], assetSource);
           log(targetDefinition, chalk.green('[written]'), chalk.magenta('(' + filesize(assetSize) + ')'));
         } catch (error) {
           log(targetDefinition, chalk.bold.red('[is not written]'), chalk.magenta('(' + filesize(assetSize) + ')'));
