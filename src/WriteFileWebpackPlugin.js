@@ -81,6 +81,18 @@ export default function WriteFileWebpackPlugin (userOptions: UserOptionsType = {
     debug(chalk.dim('[' + moment().format('HH:mm:ss') + '] [write-file-webpack-plugin]'), ...append);
   };
 
+  const getAssetSource = (asset) => {
+    const source = asset.source();
+
+    if (Array.isArray(source)) {
+      return source.join('\n');
+    } else if (source instanceof ArrayBuffer) {
+      return Buffer.from(source);
+    }
+
+    return source;
+  };
+
   const assetSourceHashIndex = {};
 
   log('options', options);
@@ -154,7 +166,7 @@ export default function WriteFileWebpackPlugin (userOptions: UserOptionsType = {
         }
 
         const assetSize = asset.size();
-        const assetSource = Array.isArray(asset.source()) ? asset.source().join('\n') : asset.source();
+        const assetSource = getAssetSource(asset);
 
         if (options.useHashIndex) {
           const assetSourceHash = createHash('sha256').update(assetSource).digest('hex');
