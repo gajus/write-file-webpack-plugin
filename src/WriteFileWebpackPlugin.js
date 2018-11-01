@@ -165,7 +165,7 @@ export default function WriteFileWebpackPlugin (userOptions: UserOptionsType = {
           }
         }
 
-        const assetSize = asset.size();
+        const assetSize = asset.size() || 0;
         const assetSource = getAssetSource(asset);
 
         if (options.useHashIndex) {
