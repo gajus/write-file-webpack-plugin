@@ -165,6 +165,7 @@ export default function WriteFileWebpackPlugin (userOptions: UserOptionsType = {
           }
         }
 
+        // asset.size method returns `undefined` for binary files (e.g. WASM). This is a temporarily workaround.
         const assetSize = asset.size() || 0;
         const assetSource = getAssetSource(asset);
 
