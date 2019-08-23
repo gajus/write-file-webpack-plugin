@@ -4,8 +4,8 @@ import path from 'path';
 import _ from 'lodash';
 import mkdirp from 'mkdirp';
 import chalk from 'chalk';
-import moment from 'moment';
 import filesize from 'filesize';
+import dayjs from 'dayjs';
 import createDebug from 'debug';
 import {sync as writeFileAtomicSync} from 'write-file-atomic';
 
@@ -78,7 +78,7 @@ export default function WriteFileWebpackPlugin (userOptions: UserOptionsType = {
       return;
     }
 
-    debug(chalk.dim('[' + moment().format('HH:mm:ss') + '] [write-file-webpack-plugin]'), ...append);
+    debug(chalk.dim('[' + dayjs().format('HH:mm:ss') + '] [write-file-webpack-plugin]'), ...append);
   };
 
   const getAssetSource = (asset) => {
