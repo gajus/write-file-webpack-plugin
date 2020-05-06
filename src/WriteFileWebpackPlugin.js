@@ -1,7 +1,7 @@
 import fs from 'fs';
 import {createHash} from 'crypto';
 import path from 'path';
-import _ from 'lodash';
+import {forEach, has, isBoolean, isFunction, isNull, isRegExp} from 'lodash';
 import mkdirp from 'mkdirp';
 import chalk from 'chalk';
 import moment from 'moment';
@@ -38,7 +38,7 @@ type UserOptionsType = {
 };
 
 export default function WriteFileWebpackPlugin (userOptions: UserOptionsType = {}): Object {
-  const options = _.assign({}, {
+  const options = Object.assign({}, {
     atomicReplace: true,
     exitOnErrors: true,
     force: false,
@@ -47,27 +47,27 @@ export default function WriteFileWebpackPlugin (userOptions: UserOptionsType = {
     useHashIndex: true
   }, userOptions);
 
-  if (!_.isBoolean(options.exitOnErrors)) {
+  if (!isBoolean(options.exitOnErrors)) {
     throw new TypeError('options.exitOnErrors value must be of boolean type.');
   }
 
-  if (!_.isBoolean(options.force)) {
+  if (!isBoolean(options.force)) {
     throw new TypeError('options.force value must be of boolean type.');
   }
 
-  if (!_.isBoolean(options.log)) {
+  if (!isBoolean(options.log)) {
     throw new TypeError('options.log value must be of boolean type.');
   }
 
-  if (!_.isNull(options.test) && !(_.isRegExp(options.test) || _.isFunction(options.test))) {
+  if (!isNull(options.test) && !(isRegExp(options.test) || isFunction(options.test))) {
     throw new TypeError('options.test value must be an instance of RegExp or Function.');
   }
 
-  if (!_.isBoolean(options.useHashIndex)) {
+  if (!isBoolean(options.useHashIndex)) {
     throw new TypeError('options.useHashIndex value must be of boolean type.');
   }
 
-  if (!_.isBoolean(options.atomicReplace)) {
+  if (!isBoolean(options.atomicReplace)) {
     throw new TypeError('options.atomicReplace value must be of boolean type.');
   }
 
@@ -115,7 +115,7 @@ export default function WriteFileWebpackPlugin (userOptions: UserOptionsType = {
         return false;
       }
 
-      if (_.has(compiler, 'options.output.path') && compiler.options.output.path !== '/') {
+      if (has(compiler, 'options.output.path') && compiler.options.output.path !== '/') {
         outputPath = compiler.options.output.path;
       }
 
@@ -148,7 +148,7 @@ export default function WriteFileWebpackPlugin (userOptions: UserOptionsType = {
 
       log('compilation.errors.length is "' + chalk.cyan(compilation.errors.length) + '".');
 
-      _.forEach(compilation.assets, (asset, assetPath) => {
+      forEach(compilation.assets, (asset, assetPath) => {
         const outputFilePath = path.isAbsolute(assetPath) ? assetPath : path.join(outputPath, assetPath);
         const relativeOutputPath = path.relative(process.cwd(), outputFilePath);
         const targetDefinition = 'asset: ' + chalk.cyan('./' + assetPath) + '; destination: ' + chalk.cyan('./' + relativeOutputPath);
@@ -156,7 +156,7 @@ export default function WriteFileWebpackPlugin (userOptions: UserOptionsType = {
         const test = options.test;
 
         if (test) {
-          const skip = _.isRegExp(test) ? !test.test(assetPath) : !test(assetPath);
+          const skip = isRegExp(test) ? !test.test(assetPath) : !test(assetPath);
 
           if (skip) {
             log(targetDefinition, chalk.yellow('[skipped; does not match test]'));
