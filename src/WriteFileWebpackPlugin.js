@@ -4,7 +4,6 @@ import path from 'path';
 import {forEach, has, isBoolean, isFunction, isNull, isRegExp} from 'lodash';
 import mkdirp from 'mkdirp';
 import chalk from 'chalk';
-import moment from 'moment';
 import filesize from 'filesize';
 import createDebug from 'debug';
 import {sync as writeFileAtomicSync} from 'write-file-atomic';
@@ -78,7 +77,9 @@ export default function WriteFileWebpackPlugin (userOptions: UserOptionsType = {
       return;
     }
 
-    debug(chalk.dim('[' + moment().format('HH:mm:ss') + '] [write-file-webpack-plugin]'), ...append);
+    const now = new Date();
+    timeStr = now.toTimeString().split(' ')[0];
+    debug(chalk.dim('[' + timeStr + '] [write-file-webpack-plugin]'), ...append);
   };
 
   const getAssetSource = (asset) => {
