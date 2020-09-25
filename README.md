@@ -8,6 +8,10 @@ Forces `webpack-dev-server` program to write bundle files to the file system.
 This plugin has no effect when [`webpack`](https://webpack.github.io/docs/usage.html) program
 is used instead of [`webpack-dev-server`](https://webpack.github.io/docs/webpack-dev-server.html).
 
+## Webpack 5
+
+This plugin is not needed with Webpack 5. You should instead use the `writeToDisk` option available in [`webpack-dev-server`](https://webpack.js.org/configuration/dev-server/#devserverwritetodisk-) and in [`webpack-dev-middleware`](https://github.com/webpack/webpack-dev-middleware#writetodisk).
+
 ## Install
 
 ```sh
